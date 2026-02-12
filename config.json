@@ -1,0 +1,38 @@
+{
+    "archivo_excel": "ADIDAS - SEGMENTO III - F2 y F3 - v2.xlsx",
+    "hojas": {
+        "dataset": "DATASET - TC",
+        "inbound": "INBOUND - TC",
+        "outbound": "OUTBOUND - TC",
+        "issues": "ISSUE TRACKING"
+    },
+    "columnas": {
+        "id_caso": ["ID", "Case ID", "Test Case", "ID Caso", "TC ID"],
+        "estado": ["Estado Prueba", "Estado", "Status", "Resultado"],
+        "avance": ["% Completado", "% Avance", "Avance", "% Progress", "Progress"],
+        "valores_exito": ["PASÓ", "APROBADA", "EN EJECUCIÓN", "PASS", "PASSED", "EJECUTADO", "FINALIZADO", "COMPLETO", "DONE", "EXITOSO"]
+    },
+    "logos": {
+        "principal": "https://i.ibb.co/Gv8jRZq0/logo-biz-v1.png",
+        "cliente_1": "https://i.ibb.co/tPPfK25F/trf-logo-v1.png",
+        "cliente_2": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Adidas_Logo.svg/200px-Adidas_Logo.svg.png"
+    },
+    "alcance_total": { 
+        "dataset": 37, 
+        "inbound": 127, 
+        "outbound": 841 
+    },
+   "planificacion_diaria": {
+    "16-dic": 24, "17-dic": 48, "18-dic": 71, "19-dic": 87, "20-dic": 87, "21-dic": 87, "22-dic": 98,
+    "23-dic": 104, "24-dic": 104, "25-dic": 104, "26-dic": 112, "27-dic": 112, "28-dic": 112, "29-dic": 121,
+    "30-dic": 129, "31-dic": 129, "1-ene": 129, "2-ene": 139, "3-ene": 139, "4-ene": 139, "5-ene": 146,
+    "6-ene": 153, "7-ene": 161, "8-ene": 169, "9-ene": 173, "10-ene": 173, "11-ene": 173, "12-ene": 180,
+    "13-ene": 187, "14-ene": 207, "15-ene": 221, "16-ene": 245, "17-ene": 245, "18-ene": 245, "19-ene": 273,
+    "20-ene": 302, "21-ene": 331, "22-ene": 360, "23-ene": 388, "24-ene": 388, "25-ene": 388, "26-ene": 413,
+    "27-ene": 437, "28-ene": 470, "29-ene": 502, "30-ene": 539, "31-ene": 539, "1-feb": 539, "2-feb": 575,
+    "3-feb": 620, "4-feb": 659, "5-feb": 695, "6-feb": 735, "7-feb": 735, "8-feb": 735, "9-feb": 774,
+    "10-feb": 814, "11-feb": 854, "12-feb": 897, "13-feb": 937, "14-feb": 954, "15-feb": 954, "16-feb": 954,
+    "17-feb": 954, "18-feb": 978, "19-feb": 1002, "20-feb": 1026, "21-feb": 1026, "22-feb": 1026, "23-feb": 1051,
+    "24-feb": 1077
+}
+}
