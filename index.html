@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizLogit Reports Premium v2.0 - VALIDADO</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Fase 2 Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #242424;
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --bg-glass-hover: rgba(255, 255, 255, 0.08);
+            --accent-gold: #d4a849;
+            --accent-gold-dark: #b8923f;
+            --accent-cyan: #06b6d4;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.7);
+            --shadow-glow: 0 0 30px rgba(212, 168, 73, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --bg-glass: rgba(0, 0, 0, 0.03);
+            --bg-glass-hover: rgba(0, 0, 0, 0.06);
+            --text-primary: #0a0a0a;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+            --shadow-glow: 0 0 20px rgba(212, 168, 73, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(212, 168, 73, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .navbar {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .navbar-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logos-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 45px;
+            width: auto;
+            max-width: 150px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .logo-divider {
+            width: 1px;
+            height: 35px;
+            background: var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar-brand {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logos-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .logo {
+                height: 35px;
+                max-width: 120px;
+            }
+
+            .navbar-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .last-update {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            background: var(--bg-glass);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .navbar button {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-glass);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .navbar button:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar button.btn-primary {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            border-color: var(--accent-gold);
+            color: #000;
+        }
+
+        .navbar button.auto-refresh-active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .auto-refresh-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .auto-refresh-indicator.active {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .countdown-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+        }
+
+        .countdown-circle.active {
+            border-color: #10b981;
+            color: #10b981;
+            animation: countdown-pulse 1s infinite;
+        }
+
+        @keyframes countdown-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .interval-selector {
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interval-selector:hover {
+            border-color: var(--accent-gold);
+        }
+
+        /* Tabs System */
+        .tabs-container {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            margin: 0;
+            position: sticky;
+            top: 73px;
+            z-index: 999;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .tabs::-webkit-scrollbar {
+            height: 2px;
+        }
+
+        .tabs::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-glass-hover);
+        }
+
+        .tab.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+            background: var(--bg-glass-hover);
+        }
+
+        .tab-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.5rem;
+            height: 1.5rem;
+            padding: 0 0.4rem;
+            background: var(--accent-gold);
+            color: #000;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            padding-top: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .tabs-container {
+                padding: 0 1rem;
+                top: auto;
+                position: relative;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .tab-badge {
+                min-width: 1.2rem;
+                height: 1.2rem;
+                font-size: 0.7rem;
+            }
+        }
+
+        .filter-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 2rem;
+            box-shadow: var(--shadow-md);
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .filter-panel.active { display: block; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-group select {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group select:hover,
+        .filter-group select:focus {
+            border-color: var(--accent-gold);
+            outline: none;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .filter-actions button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-section .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .kpi-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .kpi-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .kpi-trend {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .trend-positive {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .trend-negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-ok {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-warning {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-delayed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 2rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+        }
+
+        .data-table thead {
+            background: var(--bg-tertiary);
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--bg-glass-hover);
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sev-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .sev-high {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        .sev-medium {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .sev-low {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem 2rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        body:fullscreen .navbar,
+        body:fullscreen .filter-panel {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            margin: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .navbar { flex-direction: column; gap: 1rem; }
+            .navbar-actions { width: 100%; justify-content: center; }
+            .kpi-grid { grid-template-columns: 1fr; }
+            .header-section h1 { font-size: 1.8rem; }
+            .filter-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // VALIDACIÓN: Función mejorada de carga de datos
+        async function loadDashboardData() {
+            try {
+                console.log('📊 Intentando cargar dashboard_data.json...');
+                const response = await fetch('dashboard_data.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Datos cargados correctamente:', data);
+                
+                // Validar estructura de datos
+                if (!data.kpis || !data.modulos || !data.issues || !data.procesos) {
+                    throw new Error('Estructura de datos inválida');
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('⚠️ Error al cargar datos externos:', error);
+                console.log('📝 Usando datos embebidos por defecto');
+                
+                // Datos embebidos del JSON subido
+                return {
+                    "fecha": "05-feb",
+                    "fecha_formato": "05-Feb",
+                    "kpis": {
+                        "avance_real": 42.2,
+                        "planificado": 62.9,
+                        "casos_ok": 342,
+                        "casos_wip": 197,
+                        "casos_pendientes": 566,
+                        "issues_activos": 2,
+                        "total_casos": 1105,
+                        "total_ponderado": 466.7,
+                        "gap": -228.3,
+                        "gap_porcentaje": -20.7,
+                        "status": "DELAYED"
+                    },
+                    "modulos": {
+                        "dataset": { "ok": 37, "wip": 0, "ponderado": 37.0, "total": 37, "porcentaje": 100.0 },
+                        "inbound": { "ok": 1, "wip": 27, "ponderado": 18.3, "total": 127, "porcentaje": 14.4 },
+                        "outbound": { "ok": 304, "wip": 170, "ponderado": 411.4, "total": 941, "porcentaje": 43.7 }
+                    },
+                    "issues": {
+                        "lista": [
+                            {
+                                "id": "ISS - 004",
+                                "severidad": "HIGH",
+                                "severidad_key": "high",
+                                "descripcion": "Cuando se intenta enviar la Confirmación de ingresos desde BIZION a Adidas informa error de campos SURS 2 Y surs 3 INCOMPLETOS",
+                                "responsable": "BIZLOGIT / INFOR",
+                                "estado": "EN ANALISIS",
+                                "sistema": "WMS / BIZION"
+                            },
+                            {
+                                "id": "ISS - 005",
+                                "severidad": "HIGH",
+                                "severidad_key": "high",
+                                "descripcion": "No llegan las novedades de procesamiento de recepciones a Adidas.",
+                                "responsable": "BIZLOGIT",
+                                "estado": "EN ANALISIS",
+                                "sistema": "WMS / BIZION"
+                            }
+                        ],
+                        "estadisticas": { "critical": 0, "high": 2, "medium": 0, "low": 0 },
+                        "total": 2
+                    },
+                    "procesos": {
+                        "MAESTROS": { "total": 37, "ok": 37, "wip": 0, "ponderado": 37.0, "porcentaje": 100.0 },
+                        "RECEPCION": { "total": 28, "ok": 1, "wip": 27, "ponderado": 18.28, "porcentaje": 65.3 },
+                        "DEVOLUCIONES": { "total": 99, "ok": 0, "wip": 0, "ponderado": 0.0, "porcentaje": 0.0 },
+                        "REPOSICION": { "total": 9, "ok": 6, "wip": 0, "ponderado": 6.0, "porcentaje": 66.7 },
+                        "PREPARACION": { "total": 527, "ok": 192, "wip": 80, "ponderado": 218.99, "porcentaje": 41.6 },
+                        "TECNIFICACION": { "total": 256, "ok": 65, "wip": 21, "ponderado": 73.91, "porcentaje": 28.9 },
+                        "PLANIFICACION": { "total": 85, "ok": 18, "wip": 33, "ponderado": 30.69, "porcentaje": 36.1 },
+                        "EMPAQUETADO": { "total": 1, "ok": 0, "wip": 1, "ponderado": 0.93, "porcentaje": 92.9 },
+                        "CANALIZADO": { "total": 28, "ok": 8, "wip": 18, "ponderado": 22.76, "porcentaje": 81.3 },
+                        "PACK & HOLD": { "total": 2, "ok": 0, "wip": 2, "ponderado": 1.73, "porcentaje": 86.7 },
+                        "FACTURACION": { "total": 10, "ok": 1, "wip": 6, "ponderado": 5.40, "porcentaje": 54.0 },
+                        "INVENTARIO": { "total": 8, "ok": 8, "wip": 0, "ponderado": 8.0, "porcentaje": 100.0 },
+                        "DISTRIBUCION": { "total": 6, "ok": 6, "wip": 0, "ponderado": 6.0, "porcentaje": 100.0 },
+                        "CARGA DE CAMION": { "total": 9, "ok": 0, "wip": 9, "ponderado": 6.20, "porcentaje": 68.9 },
+                        "SIN CLASIFICAR": { "total": 30, "ok": 0, "wip": 0, "ponderado": 0.0, "porcentaje": 0.0 }
+                    },
+                    "velocidad": {
+                        "actual": 9.0,
+                        "requerida": 12.3,
+                        "dias_transcurridos": 52,
+                        "proyeccion_finalizacion": "16-Apr"
+                    }
+                };
+            }
+        }
+
+        async function loadConfig() {
+            // Intentar múltiples ubicaciones
+            const locations = [
+                'config.json',              // Misma carpeta (core/config.json)
+                '../config/config.json',    // Carpeta config en nivel superior ✅
+                'config/config.json',       // Subcarpeta config
+                '../config.json'            // Nivel superior directo
+            ];
+            
+            for (const location of locations) {
+                try {
+                    console.log(`🔧 Intentando cargar config desde: ${location}`);
+                    const response = await fetch(location);
+                    
+                    if (response.ok) {
+                        const config = await response.json();
+                        console.log('✅ Config cargado correctamente desde:', location);
+                        console.log('   Logos configurados:', config.logos);
+                        
+                        // Validar que tenga logos
+                        if (config.logos) {
+                            return config;
+                        }
+                    }
+                } catch (error) {
+                    console.log(`  ⚠️ No encontrado en ${location}`);
+                }
+            }
+            
+            console.log('⚠️ Config no disponible en ninguna ubicación, usando valores por defecto');
+            return {
+                logos: {
+                    principal: 'https://i.ibb.co/NnTtZtY/LOGO-BIZLOGIT-2019-1.jpg',
+                    cliente_1: '',
+                    cliente_2: ''
+                }
+            };
+        }
+
+        function Dashboard() {
+            const [data, setData] = useState(null);
+            const [logos, setLogos] = useState(null);
+            const [theme, setTheme] = useState('dark');
+            const [currentTime, setCurrentTime] = useState(new Date());
+            const [showFilters, setShowFilters] = useState(false);
+            const [filters, setFilters] = useState({
+                modulo: 'todos',
+                estado: 'todos',
+                severidad: 'todos'
+            });
+            const [loadError, setLoadError] = useState(null);
+            
+            // Auto-refresh states
+            const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
+            const [refreshInterval, setRefreshInterval] = useState(30); // segundos
+            const [countdown, setCountdown] = useState(30);
+            const [lastUpdate, setLastUpdate] = useState(new Date());
+            
+            // Tabs state
+            const [activeTab, setActiveTab] = useState('overview');
+
+            useEffect(() => {
+                // Cargar datos del dashboard
+                loadDashboardData()
+                    .then(data => {
+                        setData(data);
+                        setLoadError(null);
+                    })
+                    .catch(err => {
+                        console.error('Error fatal al cargar datos:', err);
+                        setLoadError(err.message);
+                    });
+                
+                // Cargar configuración de logos
+                loadConfig()
+                    .then(config => {
+                        setLogos(config.logos);
+                    })
+                    .catch(err => {
+                        console.log('No se pudieron cargar los logos:', err);
+                    });
+            }, []);
+
+            useEffect(() => {
+                document.documentElement.setAttribute('data-theme', theme);
+            }, [theme]);
+
+            useEffect(() => {
+                const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            // Auto-refresh timer
+            useEffect(() => {
+                if (!autoRefreshEnabled) {
+                    setCountdown(refreshInterval);
+                    return;
+                }
+                
+                const countdownTimer = setInterval(() => {
+                    setCountdown(prev => {
+                        if (prev <= 1) {
+                            // Tiempo agotado, recargar datos
+                            handleRefresh(true); // Auto-refresh
+                            return refreshInterval;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+                
+                return () => clearInterval(countdownTimer);
+            }, [autoRefreshEnabled, refreshInterval, data]); // Agregar data como dependencia
+
+            const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+            const toggleFilters = () => setShowFilters(prev => !prev);
+            
+            const toggleAutoRefresh = () => {
+                setAutoRefreshEnabled(prev => !prev);
+                setCountdown(refreshInterval);
+            };
+            
+            const changeRefreshInterval = (seconds) => {
+                setRefreshInterval(seconds);
+                setCountdown(seconds);
+            };
+            
+            const handleFilterChange = (key, value) => setFilters(prev => ({ ...prev, [key]: value }));
+            const resetFilters = () => setFilters({ modulo: 'todos', estado: 'todos', severidad: 'todos' });
+
+            const exportToPDF = async () => {
+                try {
+                    const element = document.getElementById('dashboard-content');
+                    const canvas = await html2canvas(element, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: theme === 'dark' ? '#0a0a0a' : '#ffffff'
+                    });
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    
+                    const imgWidth = 210;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    let heightLeft = imgHeight;
+                    let position = 0;
+                    
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= 297;
+                    
+                    while (heightLeft > 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= 297;
+                    }
+                    
+                    pdf.save(`Dashboard_BizLogit_${data.fecha_formato}.pdf`);
+                    alert('✅ PDF exportado exitosamente');
+                } catch (error) {
+                    console.error('Error al exportar PDF:', error);
+                    alert('❌ Error al exportar PDF: ' + error.message);
+                }
+            };
+
+            const exportToExcel = () => {
+                try {
+                    const wb = XLSX.utils.book_new();
+                    
+                    const kpisData = [
+                        ['DASHBOARD BIZLOGIT - RESUMEN EJECUTIVO'],
+                        ['Fecha', data.fecha_formato],
+                        [''],
+                        ['MÉTRICA', 'VALOR'],
+                        ['Avance Real', `${data.kpis.avance_real}%`],
+                        ['Planificado', `${data.kpis.planificado}%`],
+                        ['Gap', `${data.kpis.gap_porcentaje}%`],
+                        ['Casos OK', data.kpis.casos_ok],
+                        ['Casos WIP', data.kpis.casos_wip],
+                        ['Casos Pendientes', data.kpis.casos_pendientes],
+                        ['Total Casos', data.kpis.total_casos],
+                        ['Issues Activos', data.kpis.issues_activos],
+                        ['Estado', data.kpis.status]
+                    ];
+                    const ws1 = XLSX.utils.aoa_to_sheet(kpisData);
+                    ws1['!cols'] = [{ wch: 25 }, { wch: 15 }];
+                    XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
+                    
+                    const modulosData = [
+                        ['MÓDULO', 'OK', 'WIP', 'TOTAL', 'PONDERADO', 'PORCENTAJE'],
+                        ...Object.entries(data.modulos).map(([key, mod]) => [
+                            key.toUpperCase(), mod.ok, mod.wip, mod.total,
+                            mod.ponderado.toFixed(2), `${mod.porcentaje}%`
+                        ])
+                    ];
+                    const ws2 = XLSX.utils.aoa_to_sheet(modulosData);
+                    ws2['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 12 }];
+                    XLSX.utils.book_append_sheet(wb, ws2, 'Módulos');
+                    
+                    const procesosData = [
+                        ['PROCESO', 'OK', 'WIP', 'TOTAL', 'PONDERADO', 'PORCENTAJE'],
+                        ...Object.entries(data.procesos).map(([key, proc]) => [
+                            key, proc.ok, proc.wip, proc.total,
+                            proc.ponderado.toFixed(2), `${proc.porcentaje}%`
+                        ])
+                    ];
+                    const ws3 = XLSX.utils.aoa_to_sheet(procesosData);
+                    ws3['!cols'] = [{ wch: 20 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 12 }, { wch: 12 }];
+                    XLSX.utils.book_append_sheet(wb, ws3, 'Procesos');
+                    
+                    const issuesData = [
+                        ['ID', 'SEVERIDAD', 'SISTEMA', 'DESCRIPCIÓN', 'RESPONSABLE', 'ESTADO'],
+                        ...data.issues.lista.map(issue => [
+                            issue.id, issue.severidad, issue.sistema || 'N/A',
+                            issue.descripcion, issue.responsable, issue.estado
+                        ])
+                    ];
+                    const ws4 = XLSX.utils.aoa_to_sheet(issuesData);
+                    ws4['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 20 }, { wch: 60 }, { wch: 25 }, { wch: 15 }];
+                    XLSX.utils.book_append_sheet(wb, ws4, 'Issues');
+                    
+                    const velocidadData = [
+                        ['VELOCIDAD Y PROYECCIÓN'],
+                        [''],
+                        ['MÉTRICA', 'VALOR'],
+                        ['Velocidad Actual', `${data.velocidad.actual} casos/día`],
+                        ['Velocidad Requerida', `${data.velocidad.requerida} casos/día`],
+                        ['Días Transcurridos', data.velocidad.dias_transcurridos],
+                        ['Proyección Finalización', data.velocidad.proyeccion_finalizacion]
+                    ];
+                    const ws5 = XLSX.utils.aoa_to_sheet(velocidadData);
+                    ws5['!cols'] = [{ wch: 30 }, { wch: 20 }];
+                    XLSX.utils.book_append_sheet(wb, ws5, 'Velocidad');
+                    
+                    XLSX.writeFile(wb, `Dashboard_BizLogit_${data.fecha_formato}.xlsx`);
+                    alert('✅ Excel exportado exitosamente');
+                } catch (error) {
+                    console.error('Error al exportar Excel:', error);
+                    alert('❌ Error al exportar Excel: ' + error.message);
+                }
+            };
+
+            const togglePresentationMode = () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen()
+                        .then(() => console.log('Modo presentación activado'))
+                        .catch(err => alert('No se pudo activar: ' + err.message));
+                } else {
+                    document.exitFullscreen();
+                }
+            };
+
+            const handleRefresh = (isAuto = false) => {
+                console.log(`🔄 ${isAuto ? 'Auto-' : ''}Actualizando datos...`);
+                loadDashboardData().then(newData => {
+                    setData(newData);
+                    setLastUpdate(new Date());
+                    setCountdown(refreshInterval);
+                    if (!isAuto) {
+                        // Solo mostrar alert en refresh manual
+                        console.log('✅ Datos actualizados manualmente');
+                    } else {
+                        console.log('✅ Datos actualizados automáticamente');
+                    }
+                }).catch(err => {
+                    console.error('Error al actualizar:', err);
+                });
+            };
+
+            const filteredData = useMemo(() => {
+                if (!data) return null;
+                
+                let result = { ...data };
+                
+                if (filters.modulo !== 'todos') {
+                    const moduloKey = filters.modulo.toLowerCase();
+                    result.modulos = { [moduloKey]: data.modulos[moduloKey] };
+                }
+                
+                let issuesList = data.issues.lista;
+                
+                if (filters.severidad !== 'todos') {
+                    issuesList = issuesList.filter(i => i.severidad_key === filters.severidad);
+                }
+                
+                if (filters.estado !== 'todos') {
+                    issuesList = issuesList.filter(i => i.estado === filters.estado);
+                }
+                
+                // SIEMPRE excluir "No Aplica"
+                issuesList = issuesList.filter(i => i.estado !== 'No Aplica');
+                
+                result.issues = {
+                    ...result.issues,
+                    lista: issuesList,
+                    total: issuesList.length
+                };
+                
+                return result;
+            }, [data, filters]);
+
+            if (loadError) {
+                return (
+                    <div className="error-message">
+                        <h2>❌ Error al cargar el dashboard</h2>
+                        <p>{loadError}</p>
+                        <p style={{marginTop: '1rem', fontSize: '0.9rem'}}>
+                            Verifica que el archivo dashboard_data.json esté en la misma carpeta que este HTML.
+                        </p>
+                    </div>
+                );
+            }
+
+            if (!filteredData) {
+                return <div className="loading">⏳ Cargando datos del dashboard...</div>;
+            }
+
+            const timeStr = currentTime.toLocaleTimeString('es-ES');
+            const dateStr = currentTime.toLocaleDateString('es-ES', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+
+            return (
+                <div>
+                    <Navbar 
+                        theme={theme}
+                        toggleTheme={toggleTheme}
+                        timeStr={timeStr}
+                        exportToPDF={exportToPDF}
+                        exportToExcel={exportToExcel}
+                        toggleFilters={toggleFilters}
+                        togglePresentationMode={togglePresentationMode}
+                        onRefresh={handleRefresh}
+                        logos={logos}
+                        autoRefreshEnabled={autoRefreshEnabled}
+                        toggleAutoRefresh={toggleAutoRefresh}
+                        refreshInterval={refreshInterval}
+                        changeRefreshInterval={changeRefreshInterval}
+                        countdown={countdown}
+                        lastUpdate={lastUpdate}
+                    />
+
+                    {showFilters && (
+                        <FilterPanel 
+                            filters={filters}
+                            onFilterChange={handleFilterChange}
+                            onReset={resetFilters}
+                            data={data}
+                        />
+                    )}
+
+                    {/* Tabs Navigation */}
+                    <div className="tabs-container">
+                        <div className="tabs">
+                            <button 
+                                className={activeTab === 'overview' ? 'tab active' : 'tab'}
+                                onClick={() => setActiveTab('overview')}
+                            >
+                                📊 Overview
+                            </button>
+                            <button 
+                                className={activeTab === 'velocity' ? 'tab active' : 'tab'}
+                                onClick={() => setActiveTab('velocity')}
+                            >
+                                ⚡ Velocidad
+                            </button>
+                            <button 
+                                className={activeTab === 'modules' ? 'tab active' : 'tab'}
+                                onClick={() => setActiveTab('modules')}
+                            >
+                                📦 Módulos
+                            </button>
+                            <button 
+                                className={activeTab === 'issues' ? 'tab active' : 'tab'}
+                                onClick={() => setActiveTab('issues')}
+                            >
+                                🐛 Issues
+                                {filteredData.issues.total > 0 && (
+                                    <span className="tab-badge">{filteredData.issues.total}</span>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="dashboard-content">
+                        <div className="container">
+                            
+                            {/* TAB 1: OVERVIEW */}
+                            <div className={activeTab === 'overview' ? 'tab-content active' : 'tab-content'}>
+                                <HeaderSection dateStr={dateStr} fecha={filteredData.fecha_formato} />
+                                <KPIGrid kpis={filteredData.kpis} />
+                                <div style={{ 
+                                    display: 'flex', 
+                                    justifyContent: 'center', 
+                                    gap: '2rem', 
+                                    marginTop: '2rem' 
+                                }}>
+                                    <div style={{ width: '100%', maxWidth: '600px' }}>
+                                        <TacometroChart kpis={filteredData.kpis} theme={theme} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* TAB 2: VELOCIDAD */}
+                            <div className={activeTab === 'velocity' ? 'tab-content active' : 'tab-content'}>
+                                <h2 style={{ fontSize: '1.8rem', marginBottom: '2rem', color: 'var(--text-primary)' }}>
+                                    ⚡ Análisis de Velocidad
+                                </h2>
+                                <div style={{ display: 'grid', gap: '2rem' }}>
+                                    <div style={{ 
+                                        display: 'flex', 
+                                        justifyContent: 'center', 
+                                        width: '100%' 
+                                    }}>
+                                        <div style={{ width: '100%', maxWidth: '600px' }}>
+                                            <TacometroChart kpis={filteredData.kpis} theme={theme} />
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Métricas de Velocidad */}
+                                    <div style={{ 
+                                        display: 'grid', 
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                                        gap: '1.5rem' 
+                                    }}>
+                                        <div className="card">
+                                            <h3 style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                                GAP vs Planificación
+                                            </h3>
+                                            <div style={{ fontSize: '2.5rem', fontWeight: '800', color: filteredData.kpis.gap < 0 ? '#ef4444' : '#10b981' }}>
+                                                {filteredData.kpis.gap_porcentaje}%
+                                            </div>
+                                            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                                {filteredData.kpis.gap < 0 ? 'Por debajo del plan' : 'Por encima del plan'}
+                                            </p>
+                                        </div>
+                                        
+                                        <div className="card">
+                                            <h3 style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                                Avance Real
+                                            </h3>
+                                            <div style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--accent-cyan)' }}>
+                                                {filteredData.kpis.avance_real}%
+                                            </div>
+                                            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                                {filteredData.kpis.total_ponderado} / {filteredData.kpis.total_casos} casos ponderados
+                                            </p>
+                                        </div>
+                                        
+                                        <div className="card">
+                                            <h3 style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                                Planificado
+                                            </h3>
+                                            <div style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--accent-gold)' }}>
+                                                {filteredData.kpis.planificado}%
+                                            </div>
+                                            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                                Meta para {filteredData.fecha_formato}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Información del Status */}
+                                    <div className="card">
+                                        <h3 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>📋 Estado del Proyecto</h3>
+                                        <div style={{ 
+                                            padding: '1.5rem', 
+                                            background: filteredData.kpis.status === 'DELAYED' ? 'rgba(239, 68, 68, 0.1)' : 
+                                                       filteredData.kpis.status === 'AT RISK' ? 'rgba(251, 191, 36, 0.1)' : 
+                                                       'rgba(16, 185, 129, 0.1)',
+                                            borderRadius: '12px',
+                                            border: `2px solid ${filteredData.kpis.status === 'DELAYED' ? '#ef4444' : 
+                                                                filteredData.kpis.status === 'AT RISK' ? '#fbbf24' : 
+                                                                '#10b981'}`
+                                        }}>
+                                            <div style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '0.5rem' }}>
+                                                {filteredData.kpis.status === 'DELAYED' ? '🔴' : 
+                                                 filteredData.kpis.status === 'AT RISK' ? '🟡' : '🟢'} {filteredData.kpis.status}
+                                            </div>
+                                            <p style={{ color: 'var(--text-secondary)' }}>
+                                                {filteredData.kpis.status === 'DELAYED' && 'Proyecto retrasado respecto a la planificación'}
+                                                {filteredData.kpis.status === 'AT RISK' && 'Proyecto en riesgo de retraso'}
+                                                {filteredData.kpis.status === 'ON TRACK' && 'Proyecto según lo planificado'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* TAB 3: MÓDULOS */}
+                            <div className={activeTab === 'modules' ? 'tab-content active' : 'tab-content'}>
+                                <h2 style={{ fontSize: '1.8rem', marginBottom: '2rem', color: 'var(--text-primary)' }}>
+                                    📦 Avance por Módulos
+                                </h2>
+                                <div style={{ display: 'grid', gap: '2rem' }}>
+                                    <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))' }}>
+                                        <CasosChart kpis={filteredData.kpis} />
+                                        <ModulosChart modulos={filteredData.modulos} />
+                                    </div>
+                                    <ProcessTable procesos={filteredData.procesos} />
+                                </div>
+                            </div>
+
+                            {/* TAB 4: ISSUES */}
+                            <div className={activeTab === 'issues' ? 'tab-content active' : 'tab-content'}>
+                                <h2 style={{ fontSize: '1.8rem', marginBottom: '2rem', color: 'var(--text-primary)' }}>
+                                    🐛 Issues y Bloqueos
+                                </h2>
+                                <IssuesTable issues={filteredData.issues.lista} />
+                            </div>
+
+                            <Footer />
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function Navbar({ 
+            theme, toggleTheme, timeStr, exportToPDF, exportToExcel, toggleFilters, 
+            togglePresentationMode, onRefresh, logos, autoRefreshEnabled, toggleAutoRefresh,
+            refreshInterval, changeRefreshInterval, countdown, lastUpdate
+        }) {
+            // Función para validar URL
+            const isValidUrl = (url) => {
+                if (!url || url.trim() === '') return false;
+                return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:');
+            };
+            
+            // Filtrar logos válidos
+            const hasLogos = logos && (
+                isValidUrl(logos.principal) || 
+                isValidUrl(logos.cliente_1) || 
+                isValidUrl(logos.cliente_2)
+            );
+
+            // Formato de última actualización
+            const formatLastUpdate = () => {
+                if (!lastUpdate) return '';
+                const diff = Math.floor((new Date() - lastUpdate) / 1000);
+                if (diff < 60) return `${diff}s`;
+                if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+                return `${Math.floor(diff / 3600)}h`;
+            };
+            
+            return (
+                <nav className="navbar">
+                    <div className="navbar-brand">
+                        {hasLogos ? (
+                            <div className="logos-container">
+                                {isValidUrl(logos.principal) && (
+                                    <img 
+                                        src={logos.principal} 
+                                        alt="Logo Principal" 
+                                        className="logo"
+                                        onError={(e) => {
+                                            console.warn('Error cargando logo principal:', logos.principal);
+                                            e.target.style.display = 'none';
+                                        }}
+                                        onLoad={() => console.log('✅ Logo principal cargado')}
+                                    />
+                                )}
+                                {(isValidUrl(logos.cliente_1) || isValidUrl(logos.cliente_2)) && 
+                                 isValidUrl(logos.principal) && (
+                                    <div className="logo-divider"></div>
+                                )}
+                                {isValidUrl(logos.cliente_1) && (
+                                    <img 
+                                        src={logos.cliente_1} 
+                                        alt="Logo Cliente 1" 
+                                        className="logo"
+                                        onError={(e) => {
+                                            console.warn('Error cargando logo cliente 1:', logos.cliente_1);
+                                            e.target.style.display = 'none';
+                                        }}
+                                        onLoad={() => console.log('✅ Logo cliente 1 cargado')}
+                                    />
+                                )}
+                                {isValidUrl(logos.cliente_2) && (
+                                    <img 
+                                        src={logos.cliente_2} 
+                                        alt="Logo Cliente 2" 
+                                        className="logo"
+                                        onError={(e) => {
+                                            console.warn('Error cargando logo cliente 2:', logos.cliente_2);
+                                            e.target.style.display = 'none';
+                                        }}
+                                        onLoad={() => console.log('✅ Logo cliente 2 cargado')}
+                                    />
+                                )}
+                            </div>
+                        ) : (
+                            <div className="navbar-title">📊 BizLogit Reports Premium v1.2</div>
+                        )}
+                    </div>
+                    <div className="navbar-actions">
+                        <span className="last-update">🕐 {timeStr}</span>
+                        
+                        {/* Auto-refresh indicator */}
+                        {autoRefreshEnabled && (
+                            <div className="auto-refresh-indicator active">
+                                <div className="countdown-circle active">{countdown}</div>
+                                <span>Auto {refreshInterval}s</span>
+                            </div>
+                        )}
+                        
+                        {/* Interval selector */}
+                        {autoRefreshEnabled && (
+                            <select 
+                                className="interval-selector" 
+                                value={refreshInterval} 
+                                onChange={(e) => changeRefreshInterval(Number(e.target.value))}
+                            >
+                                <option value={15}>15s</option>
+                                <option value={30}>30s</option>
+                                <option value={60}>1m</option>
+                                <option value={120}>2m</option>
+                                <option value={300}>5m</option>
+                            </select>
+                        )}
+                        
+                        <button onClick={toggleTheme}>
+                            {theme === 'dark' ? '🌞 Claro' : '🌙 Oscuro'}
+                        </button>
+                        <button onClick={exportToPDF}>📄 PDF</button>
+                        <button onClick={exportToExcel}>📊 Excel</button>
+                        <button onClick={toggleFilters}>🔍 Filtros</button>
+                        <button onClick={togglePresentationMode}>🖥️ Presentar</button>
+                        <button 
+                            onClick={toggleAutoRefresh}
+                            className={autoRefreshEnabled ? 'auto-refresh-active' : ''}
+                            title={autoRefreshEnabled ? 'Desactivar auto-refresh' : 'Activar auto-refresh'}
+                        >
+                            {autoRefreshEnabled ? '⏸️ Auto' : '▶️ Auto'}
+                        </button>
+                        <button onClick={() => onRefresh(false)} className="btn-primary">🔄 Actualizar</button>
+                    </div>
+                </nav>
+            );
+        }
+
+        function FilterPanel({ filters, onFilterChange, onReset, data }) {
+            const modulosList = Object.keys(data.modulos);
+            const estadosList = [...new Set(data.issues.lista.map(i => i.estado))].filter(e => e !== 'No Aplica');
+            
+            return (
+                <div className="filter-panel active">
+                    <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem' }}>🔍 Filtros Avanzados</h3>
+                    <div className="filter-grid">
+                        <div className="filter-group">
+                            <label>Módulo</label>
+                            <select value={filters.modulo} onChange={(e) => onFilterChange('modulo', e.target.value)}>
+                                <option value="todos">Todos los módulos</option>
+                                {modulosList.map(mod => (
+                                    <option key={mod} value={mod}>{mod.toUpperCase()}</option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <div className="filter-group">
+                            <label>Severidad</label>
+                            <select value={filters.severidad} onChange={(e) => onFilterChange('severidad', e.target.value)}>
+                                <option value="todos">Todas</option>
+                                <option value="critical">CRITICAL</option>
+                                <option value="high">HIGH</option>
+                                <option value="medium">MEDIUM</option>
+                                <option value="low">LOW</option>
+                            </select>
+                        </div>
+                        
+                        <div className="filter-group">
+                            <label>Estado</label>
+                            <select value={filters.estado} onChange={(e) => onFilterChange('estado', e.target.value)}>
+                                <option value="todos">Todos</option>
+                                {estadosList.map(estado => (
+                                    <option key={estado} value={estado}>{estado}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div className="filter-actions">
+                        <button className="btn-reset" onClick={onReset}>🔄 Resetear Filtros</button>
+                    </div>
+                </div>
+            );
+        }
+
+        function HeaderSection({ dateStr, fecha }) {
+            return (
+                <div className="header-section">
+                    <h1>Dashboard Ejecutivo - BizLogit</h1>
+                    <p className="subtitle">{dateStr} • Reporte: {fecha}</p>
+                </div>
+            );
+        }
+
+        function KPIGrid({ kpis }) {
+            return (
+                <div className="kpi-grid">
+                    <div className="glass-card kpi-card">
+                        <div className="kpi-icon">🎯</div>
+                        <div className="kpi-value" style={{ color: '#06b6d4' }}>{kpis.avance_real}%</div>
+                        <div className="kpi-label">Avance Real</div>
+                        <div className="kpi-trend trend-negative">
+                            {kpis.gap_porcentaje}% vs Plan
+                        </div>
+                    </div>
+
+                    <div className="glass-card kpi-card">
+                        <div className="kpi-icon">📈</div>
+                        <div className="kpi-value" style={{ color: '#d4a849' }}>{kpis.planificado}%</div>
+                        <div className="kpi-label">Planificado</div>
+                    </div>
+
+                    <div className="glass-card kpi-card">
+                        <div className="kpi-icon">✅</div>
+                        <div className="kpi-value" style={{ color: '#10b981' }}>{kpis.casos_ok}</div>
+                        <div className="kpi-label">Casos OK</div>
+                        <div className="kpi-trend trend-positive">
+                            {((kpis.casos_ok / kpis.total_casos) * 100).toFixed(1)}% del total
+                        </div>
+                    </div>
+
+                    <div className="glass-card kpi-card">
+                        <div className="kpi-icon">⚠️</div>
+                        <div className="kpi-value" style={{ color: '#ef4444' }}>{kpis.issues_activos}</div>
+                        <div className="kpi-label">Issues Activos</div>
+                        <span className={`status-badge status-${kpis.status.toLowerCase()}`}>
+                            {kpis.status}
+                        </span>
+                    </div>
+                </div>
+            );
+        }
+
+        function TacometroChart({ kpis, theme }) {
+            const canvasRef = useRef(null);
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                const centerX = width / 2;
+                const centerY = height / 2 + 20;
+                const radius = Math.min(width / 2 - 40, 140);
+
+                ctx.clearRect(0, 0, width, height);
+
+                const realPct = kpis.avance_real;
+                const planPct = kpis.planificado;
+                const startAngle = Math.PI;
+                const totalRange = Math.PI;
+
+                let realColor = '#ef4444';
+                if (kpis.status === 'ON TRACK') realColor = '#10b981';
+                else if (kpis.status === 'AT RISK') realColor = '#f59e0b';
+
+                // Fondo
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + totalRange, false);
+                ctx.lineWidth = 40;
+                ctx.strokeStyle = 'rgba(128, 128, 128, 0.15)';
+                ctx.stroke();
+
+                // Real
+                const realAngleEnd = startAngle + (realPct / 100) * totalRange;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, startAngle, realAngleEnd, false);
+                ctx.lineWidth = 40;
+                ctx.strokeStyle = realColor;
+                ctx.stroke();
+
+                // Glow
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = realColor;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // Gap
+                if (planPct > realPct) {
+                    const planAngleEnd = startAngle + (planPct / 100) * totalRange;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, realAngleEnd, planAngleEnd, false);
+                    ctx.lineWidth = 40;
+                    ctx.strokeStyle = 'rgba(128, 128, 128, 0.35)';
+                    ctx.stroke();
+                }
+
+                // Aguja
+                const needleAngle = startAngle + (realPct / 100) * totalRange;
+                const needleLength = radius - 15;
+
+                ctx.save();
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = '#d4a849';
+                ctx.translate(centerX, centerY);
+                ctx.rotate(needleAngle);
+                
+                ctx.beginPath();
+                ctx.moveTo(-12, -6);
+                ctx.lineTo(-12, 6);
+                ctx.lineTo(needleLength, 0);
+                ctx.closePath();
+                ctx.fillStyle = '#d4a849';
+                ctx.fill();
+                ctx.restore();
+
+                // Centro (más grande y prominente)
+                ctx.save();
+                ctx.shadowBlur = 25;
+                ctx.shadowColor = '#d4a849';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 20, 0, 2 * Math.PI);
+                ctx.fillStyle = '#d4a849';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = theme === 'dark' ? '#2c2c2c' : '#ffffff';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.restore();
+
+                // Texto central - Porcentaje
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                const textColor = theme === 'dark' ? '#ffffff' : '#0a0a0a';
+                ctx.font = 'bold 48px Inter, Arial';
+                ctx.fillStyle = textColor;
+                ctx.fillText(`${realPct}%`, centerX, centerY - 45);
+                
+                // Texto secundario
+                ctx.font = '14px Inter, Arial';
+                const secondaryColor = theme === 'dark' ? '#a0a0a0' : '#666666';
+                ctx.fillStyle = secondaryColor;
+                ctx.fillText(`Plan: ${planPct}%`, centerX, centerY + 65);
+                ctx.fillText('Avance del Proyecto', centerX, centerY + 85);
+
+            }, [kpis, theme]);
+
+            return (
+                <div className="glass-card" style={{ padding: '2rem' }}>
+                    <h3 style={{ 
+                        marginBottom: '1.5rem', 
+                        fontSize: '1.2rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        justifyContent: 'center'
+                    }}>
+                        🎯 Tacómetro de Avance
+                    </h3>
+                    <div className="chart-wrapper" style={{ 
+                        display: 'flex', 
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <canvas ref={canvasRef} width="600" height="350"></canvas>
+                    </div>
+                </div>
+            );
+        }
+
+        function CasosChart({ kpis }) {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+
+            useEffect(() => {
+                if (!canvasRef.current) return;
+                if (chartRef.current) chartRef.current.destroy();
+
+                const datalabelsPlugin = {
+                    id: 'datalabels',
+                    afterDatasetsDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        chart.data.datasets.forEach((dataset, datasetIndex) => {
+                            const meta = chart.getDatasetMeta(datasetIndex);
+                            if (!meta.hidden) {
+                                meta.data.forEach((element, index) => {
+                                    const data = dataset.data[index];
+                                    if (data > 0) {
+                                        const {x, y} = element.tooltipPosition();
+                                        ctx.fillStyle = '#fff';
+                                        ctx.font = 'bold 16px Arial';
+                                        ctx.textAlign = 'center';
+                                        ctx.fillText(data, x, y);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                };
+
+                chartRef.current = new Chart(canvasRef.current, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['OK', 'WIP', 'Pendientes'],
+                        datasets: [{
+                            data: [kpis.casos_ok, kpis.casos_wip, kpis.casos_pendientes],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    color: getComputedStyle(document.body).getPropertyValue('--text-primary'),
+                                    font: { size: 12, weight: 600 }
+                                }
+                            }
+                        }
+                    },
+                    plugins: [datalabelsPlugin]
+                });
+
+                return () => {
+                    if (chartRef.current) chartRef.current.destroy();
+                };
+            }, [kpis]);
+
+            return (
+                <div className="glass-card">
+                    <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>📊 Estado de Casos</h3>
+                    <div className="chart-wrapper">
+                        <canvas ref={canvasRef}></canvas>
+                    </div>
+                </div>
+            );
+        }
+
+        function ModulosChart({ modulos }) {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+
+            useEffect(() => {
+                if (!canvasRef.current) return;
+                if (chartRef.current) chartRef.current.destroy();
+
+                chartRef.current = new Chart(canvasRef.current, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(modulos).map(k => k.toUpperCase()),
+                        datasets: [{
+                            label: 'Porcentaje Completado',
+                            data: Object.values(modulos).map(m => m.porcentaje),
+                            backgroundColor: '#06b6d4',
+                            borderColor: '#0891b2',
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                callbacks: {
+                                    label: (context) => {
+                                        const mod = Object.values(modulos)[context.dataIndex];
+                                        return [
+                                            `Completado: ${context.parsed.y}%`,
+                                            `OK: ${mod.ok}`,
+                                            `WIP: ${mod.wip}`,
+                                            `Total: ${mod.total}`
+                                        ];
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { color: '#666' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#666' },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+
+                return () => {
+                    if (chartRef.current) chartRef.current.destroy();
+                };
+            }, [modulos]);
+
+            return (
+                <div className="glass-card">
+                    <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>📊 Avance por Módulo</h3>
+                    <div className="chart-container">
+                        <canvas ref={canvasRef}></canvas>
+                    </div>
+                </div>
+            );
+        }
+
+        function ProcessTable({ procesos }) {
+            return (
+                <div className="glass-card" style={{ marginTop: '2rem' }}>
+                    <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>🔄 Detalle de Procesos</h3>
+                    <div style={{ overflowX: 'auto' }}>
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Proceso</th>
+                                    <th style={{ textAlign: 'center' }}>OK</th>
+                                    <th style={{ textAlign: 'center' }}>WIP</th>
+                                    <th style={{ textAlign: 'center' }}>Total</th>
+                                    <th style={{ textAlign: 'center' }}>Ponderado</th>
+                                    <th style={{ textAlign: 'center' }}>%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.entries(procesos).map(([key, proc]) => (
+                                    <tr key={key}>
+                                        <td style={{ fontWeight: 700 }}>{key}</td>
+                                        <td style={{ textAlign: 'center', color: '#10b981' }}>{proc.ok}</td>
+                                        <td style={{ textAlign: 'center', color: '#fbbf24' }}>{proc.wip}</td>
+                                        <td style={{ textAlign: 'center' }}>{proc.total}</td>
+                                        <td style={{ textAlign: 'center' }}>{proc.ponderado.toFixed(2)}</td>
+                                        <td style={{ textAlign: 'center', fontWeight: 700 }}>
+                                            {proc.porcentaje.toFixed(1)}%
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
+
+        function IssuesTable({ issues }) {
+            if (!issues || issues.length === 0) {
+                return (
+                    <div className="glass-card" style={{ marginTop: '2rem', textAlign: 'center', padding: '3rem' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+                        <h3 style={{ color: '#10b981' }}>No hay issues activos</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
+                            Todo está funcionando correctamente
+                        </p>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="glass-card" style={{ marginTop: '2rem' }}>
+                    <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>
+                        ⚠️ Issues Activos ({issues.length})
+                    </h3>
+                    <div style={{ overflowX: 'auto' }}>
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Severidad</th>
+                                    <th>Sistema</th>
+                                    <th style={{ width: '35%' }}>Descripción</th>
+                                    <th>Responsable</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {issues.map((issue, idx) => (
+                                    <tr key={idx}>
+                                        <td style={{ fontWeight: 700, fontFamily: 'monospace' }}>{issue.id}</td>
+                                        <td>
+                                            <span className={`severity-badge sev-${issue.severidad_key}`}>
+                                                {issue.severidad}
+                                            </span>
+                                        </td>
+                                        <td>{issue.sistema || 'N/A'}</td>
+                                        <td>{issue.descripcion}</td>
+                                        <td>{issue.responsable}</td>
+                                        <td style={{ color: 'var(--text-secondary)' }}>{issue.estado}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
+
+        function Footer() {
+            return (
+                <div className="footer">
+                    <div className="footer-logo">
+                        <span>BizLogit</span>
+                        <span>•</span>
+                        <span>TRF</span>
+                        <span>•</span>
+                        <span>ADIDAS</span>
+                    </div>
+                    <p style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
+                        Testing Intelligence Platform • Dashboard Premium v2.0 VALIDADO
+                    </p>
+                    <p style={{ fontSize: '0.8rem', marginTop: '0.5rem', opacity: 0.7 }}>
+                        {new Date().toLocaleDateString('es-ES', { 
+                            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+                        })}
+                    </p>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<Dashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+{
+  "fecha": "12-feb",
+  "fecha_formato": "12-Feb",
+  "kpis": {
+    "avance_real": 68.1,
+    "planificado": 89.3,
+    "casos_ok": 597,
+    "casos_wip": 133,
+    "casos_pendientes": 275,
+    "issues_activos": 2,
+    "total_casos": 1005,
+    "total_ponderado": 684.4,
+    "gap": -212.6,
+    "gap_porcentaje": -21.2,
+    "status": "DELAYED"
+  },
+  "modulos": {
+    "dataset": {
+      "ok": 37,
+      "wip": 0,
+      "ponderado": 37.0,
+      "total": 37,
+      "porcentaje": 100.0
+    },
+    "inbound": {
+      "ok": 1,
+      "wip": 27,
+      "ponderado": 18.3,
+      "total": 127,
+      "porcentaje": 14.4
+    },
+    "outbound": {
+      "ok": 559,
+      "wip": 106,
+      "ponderado": 629.1,
+      "total": 841,
+      "porcentaje": 74.8
+    }
+  },
+  "issues": {
+    "lista": [
+      {
+        "id": "ISS - 004",
+        "severidad": "HIGH",
+        "severidad_key": "high",
+        "descripcion": "Cuando se intenta enviar la Confirmación de ingresos desde BIZION a Adidas informa error de campos SURS 2 Y surs 3 INCOMPLETOS",
+        "responsable": "BIZLOGIT / INFOR",
+        "estado": "EN ANALISIS",
+        "sistema": "WMS / BIZION"
+      },
+      {
+        "id": "ISS - 005",
+        "severidad": "HIGH",
+        "severidad_key": "high",
+        "descripcion": "No llegan las novedades de procesamiento de recepciones a Adidas.",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "WMS / BIZION"
+      }
+    ],
+    "estadisticas": {
+      "critical": 0,
+      "high": 2,
+      "medium": 0,
+      "low": 0
+    },
+    "total": 2
+  },
+  "issues_severidad": {
+    "critical": 0,
+    "high": 2,
+    "medium": 0,
+    "low": 0
+  },
+  "procesos": {
+    "MAESTROS": {
+      "total": 37,
+      "ok": 37,
+      "wip": 0,
+      "ponderado": 37.0,
+      "porcentaje": 100.0
+    },
+    "RECEPCION": {
+      "total": 28,
+      "ok": 1,
+      "wip": 27,
+      "ponderado": 18.28021978021978,
+      "porcentaje": 65.3
+    },
+    "DEVOLUCIONES": {
+      "total": 99,
+      "ok": 0,
+      "wip": 0,
+      "ponderado": 0.0,
+      "porcentaje": 0.0
+    },
+    "REPOSICION": {
+      "total": 9,
+      "ok": 9,
+      "wip": 0,
+      "ponderado": 9.0,
+      "porcentaje": 100.0
+    },
+    "PREPARACION": {
+      "total": 525,
+      "ok": 321,
+      "wip": 40,
+      "ponderado": 334.68131868131866,
+      "porcentaje": 63.7
+    },
+    "TECNIFICACION": {
+      "total": 258,
+      "ok": 153,
+      "wip": 5,
+      "ponderado": 155.76190476190476,
+      "porcentaje": 60.4
+    },
+    "PLANIFICACION": {
+      "total": 85,
+      "ok": 53,
+      "wip": 24,
+      "ponderado": 63.80419580419581,
+      "porcentaje": 75.1
+    },
+    "EMPAQUETADO": {
+      "total": 2,
+      "ok": 0,
+      "wip": 2,
+      "ponderado": 1.6932773109243697,
+      "porcentaje": 84.7
+    },
+    "CANALIZADO": {
+      "total": 29,
+      "ok": 9,
+      "wip": 19,
+      "ponderado": 25.227472527472532,
+      "porcentaje": 87.0
+    },
+    "PACK & HOLD": {
+      "total": 1,
+      "ok": 0,
+      "wip": 1,
+      "ponderado": 0.8666666666666667,
+      "porcentaje": 86.7
+    },
+    "INVENTARIO": {
+      "total": 8,
+      "ok": 8,
+      "wip": 0,
+      "ponderado": 8.0,
+      "porcentaje": 100.0
+    },
+    "FACTURACION": {
+      "total": 9,
+      "ok": 0,
+      "wip": 6,
+      "ponderado": 4.564705882352941,
+      "porcentaje": 50.7
+    },
+    "DISTRIBUCION": {
+      "total": 6,
+      "ok": 6,
+      "wip": 0,
+      "ponderado": 6.0,
+      "porcentaje": 100.0
+    },
+    "CARGA DE CAMION": {
+      "total": 9,
+      "ok": 0,
+      "wip": 9,
+      "ponderado": 6.316176470588236,
+      "porcentaje": 70.2
+    }
+  },
+  "velocidad": {
+    "actual": 38.7,
+    "requerida": 26.7,
+    "dias_transcurridos": 15,
+    "proyeccion_finalizacion": "20-Feb"
+  },
+  "issues_por_sistema": {
+    "WMS  /  BIZION": 2
+  },
+  "segmentos": {},
+  "equipos": {
+    "ADIDAS": 27,
+    "TRF": 27,
+    "BIZLOGIT": 27
+  }
+}
