@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "proyecto": "ADIDAS - SEGMENTO III - F2 y F3",
+    "creado": "2026-01-20",
+    "ultima_actualizacion": "2026-02-12"
+  },
+  "snapshots": [
+    {
+      "fecha": "2026-01-20",
+      "semana": 4,
+      "semana_inicio": "2026-01-20",
+      "avance_real": 32.5,
+      "planificado": 40.0,
+      "casos_ok": 280,
+      "total_casos": 1005,
+      "velocidad": 28.0,
+      "issues_activos": 5,
+      "gap": -75,
+      "gap_porcentaje": -18.8,
+      "status": "DELAYED",
+      "total_ponderado": 326.5
+    },
+    {
+      "fecha": "2026-01-27",
+      "semana": 5,
+      "semana_inicio": "2026-01-27",
+      "avance_real": 45.8,
+      "planificado": 55.0,
+      "casos_ok": 395,
+      "total_casos": 1005,
+      "velocidad": 32.5,
+      "issues_activos": 4,
+      "gap": -92,
+      "gap_porcentaje": -16.7,
+      "status": "DELAYED",
+      "total_ponderado": 460.5
+    },
+    {
+      "fecha": "2026-02-03",
+      "semana": 6,
+      "semana_inicio": "2026-02-03",
+      "avance_real": 57.3,
+      "planificado": 70.0,
+      "casos_ok": 485,
+      "total_casos": 1005,
+      "velocidad": 35.8,
+      "issues_activos": 3,
+      "gap": -127,
+      "gap_porcentaje": -18.1,
+      "status": "DELAYED",
+      "total_ponderado": 576.0
+    },
+    {
+      "fecha": "2026-02-12",
+      "semana": 7,
+      "semana_inicio": "2026-02-09",
+      "avance_real": 70.5,
+      "planificado": 89.3,
+      "casos_ok": 630,
+      "total_casos": 1005,
+      "velocidad": 21.0,
+      "issues_activos": 2,
+      "gap": -188.8,
+      "gap_porcentaje": -18.8,
+      "status": "DELAYED",
+      "total_ponderado": 708.2
+    }
+  ]
+}
