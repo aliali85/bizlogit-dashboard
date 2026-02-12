@@ -2,16 +2,16 @@
   "fecha": "12-feb",
   "fecha_formato": "12-Feb",
   "kpis": {
-    "avance_real": 68.1,
+    "avance_real": 70.5,
     "planificado": 89.3,
-    "casos_ok": 597,
-    "casos_wip": 133,
-    "casos_pendientes": 275,
+    "casos_ok": 630,
+    "casos_wip": 126,
+    "casos_pendientes": 249,
     "issues_activos": 2,
     "total_casos": 1005,
-    "total_ponderado": 684.4,
-    "gap": -212.6,
-    "gap_porcentaje": -21.2,
+    "total_ponderado": 708.2,
+    "gap": -188.8,
+    "gap_porcentaje": -18.8,
     "status": "DELAYED"
   },
   "modulos": {
@@ -30,11 +30,11 @@
       "porcentaje": 14.4
     },
     "outbound": {
-      "ok": 559,
-      "wip": 106,
-      "ponderado": 629.1,
+      "ok": 592,
+      "wip": 99,
+      "ponderado": 652.9,
       "total": 841,
-      "porcentaje": 74.8
+      "porcentaje": 77.6
     }
   },
   "issues": {
@@ -103,24 +103,24 @@
     },
     "PREPARACION": {
       "total": 525,
-      "ok": 321,
-      "wip": 40,
-      "ponderado": 334.68131868131866,
-      "porcentaje": 63.7
+      "ok": 339,
+      "wip": 39,
+      "ponderado": 353.812271062271,
+      "porcentaje": 67.4
     },
     "TECNIFICACION": {
       "total": 258,
-      "ok": 153,
-      "wip": 5,
-      "ponderado": 155.76190476190476,
-      "porcentaje": 60.4
+      "ok": 159,
+      "wip": 8,
+      "ponderado": 164.01190476190476,
+      "porcentaje": 63.6
     },
     "PLANIFICACION": {
       "total": 85,
-      "ok": 53,
-      "wip": 24,
-      "ponderado": 63.80419580419581,
-      "porcentaje": 75.1
+      "ok": 62,
+      "wip": 15,
+      "ponderado": 69.34265734265733,
+      "porcentaje": 81.6
     },
     "EMPAQUETADO": {
       "total": 2,
@@ -133,8 +133,8 @@
       "total": 29,
       "ok": 9,
       "wip": 19,
-      "ponderado": 25.227472527472532,
-      "porcentaje": 87.0
+      "ponderado": 25.2989010989011,
+      "porcentaje": 87.2
     },
     "PACK & HOLD": {
       "total": 1,
@@ -174,9 +174,9 @@
   },
   "velocidad": {
     "actual": 38.7,
-    "requerida": 26.7,
-    "dias_transcurridos": 15,
-    "proyeccion_finalizacion": "20-Feb"
+    "requerida": 24.7,
+    "dias_transcurridos": 16,
+    "proyeccion_finalizacion": "19-Feb"
   },
   "issues_por_sistema": {
     "WMS  /  BIZION": 2

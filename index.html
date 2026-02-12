@@ -864,6 +864,40 @@
             };
         }
 
+        async function loadSnapshots() {
+            // Intentar múltiples ubicaciones
+            const locations = [
+                'snapshots_semanales.json',
+                '../snapshots_semanales.json',
+                'core/snapshots_semanales.json'
+            ];
+            
+            for (const location of locations) {
+                try {
+                    console.log(`📊 Intentando cargar snapshots desde: ${location}`);
+                    const response = await fetch(location);
+                    
+                    if (response.ok) {
+                        const snapshots = await response.json();
+                        console.log('✅ Snapshots cargados:', snapshots.snapshots.length, 'semanas');
+                        return snapshots;
+                    }
+                } catch (error) {
+                    console.log(`  ⚠️ No encontrado en ${location}`);
+                }
+            }
+            
+            console.log('⚠️ Snapshots no disponibles, usando datos vacíos');
+            return {
+                metadata: {
+                    proyecto: 'BizLogit Reports',
+                    creado: new Date().toISOString().split('T')[0],
+                    ultima_actualizacion: new Date().toISOString().split('T')[0]
+                },
+                snapshots: []
+            };
+        }
+
         function Dashboard() {
             const [data, setData] = useState(null);
             const [logos, setLogos] = useState(null);
@@ -885,6 +919,9 @@
             
             // Tabs state
             const [activeTab, setActiveTab] = useState('overview');
+            
+            // Snapshots semanales state
+            const [snapshots, setSnapshots] = useState(null);
 
             useEffect(() => {
                 // Cargar datos del dashboard
@@ -905,6 +942,15 @@
                     })
                     .catch(err => {
                         console.log('No se pudieron cargar los logos:', err);
+                    });
+                
+                // Cargar snapshots semanales
+                loadSnapshots()
+                    .then(snapshotsData => {
+                        setSnapshots(snapshotsData);
+                    })
+                    .catch(err => {
+                        console.log('No se pudieron cargar snapshots:', err);
                     });
             }, []);
 
@@ -1206,6 +1252,15 @@
                                     <span className="tab-badge">{filteredData.issues.total}</span>
                                 )}
                             </button>
+                            <button 
+                                className={activeTab === 'historico' ? 'tab active' : 'tab'}
+                                onClick={() => setActiveTab('historico')}
+                            >
+                                📈 Histórico
+                                {snapshots && snapshots.snapshots && snapshots.snapshots.length > 0 && (
+                                    <span className="tab-badge">{snapshots.snapshots.length}</span>
+                                )}
+                            </button>
                         </div>
                     </div>
 
@@ -1336,7 +1391,432 @@
                                 <IssuesTable issues={filteredData.issues.lista} />
                             </div>
 
+                            {/* TAB 5: HISTÓRICO */}
+                            <div className={activeTab === 'historico' ? 'tab-content active' : 'tab-content'}>
+                                <h2 style={{ fontSize: '1.8rem', marginBottom: '2rem', color: 'var(--text-primary)' }}>
+                                    📈 Análisis Histórico Semanal
+                                </h2>
+                                {snapshots && snapshots.snapshots && snapshots.snapshots.length > 0 ? (
+                                    <HistoricoTab snapshots={snapshots} currentData={filteredData} theme={theme} />
+                                ) : (
+                                    <div className="card" style={{ padding: '3rem', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
+                                        <h3 style={{ marginBottom: '1rem' }}>Sin Datos Históricos</h3>
+                                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                                            Aún no hay snapshots semanales registrados.
+                                        </p>
+                                        <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                            Ejecuta: <code style={{ 
+                                                background: 'var(--bg-tertiary)', 
+                                                padding: '0.2rem 0.5rem', 
+                                                borderRadius: '4px',
+                                                fontFamily: 'monospace'
+                                            }}>python utils/snapshot_semanal.py</code>
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
                             <Footer />
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function HistoricoTab({ snapshots, currentData, theme }) {
+            const trendCanvasRef = useRef(null);
+            const velocityCanvasRef = useRef(null);
+            const trendChartRef = useRef(null);
+            const velocityChartRef = useRef(null);
+
+            useEffect(() => {
+                if (!snapshots || !snapshots.snapshots || snapshots.snapshots.length === 0) return;
+
+                const snapshotsList = snapshots.snapshots;
+                const labels = snapshotsList.map(s => `S${s.semana}`);
+                const textColor = theme === 'dark' ? '#ffffff' : '#0a0a0a';
+                const gridColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+                // Gráfico de Tendencia de Avance
+                if (trendCanvasRef.current) {
+                    if (trendChartRef.current) trendChartRef.current.destroy();
+
+                    trendChartRef.current = new Chart(trendCanvasRef.current, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Avance Real',
+                                    data: snapshotsList.map(s => s.avance_real),
+                                    borderColor: '#06b6d4',
+                                    backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4,
+                                    pointRadius: 5,
+                                    pointHoverRadius: 7
+                                },
+                                {
+                                    label: 'Planificado',
+                                    data: snapshotsList.map(s => s.planificado),
+                                    borderColor: '#d4a849',
+                                    backgroundColor: 'rgba(212, 168, 73, 0.1)',
+                                    borderWidth: 3,
+                                    borderDash: [5, 5],
+                                    fill: false,
+                                    tension: 0.4,
+                                    pointRadius: 5,
+                                    pointHoverRadius: 7
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: textColor, font: { size: 14 } }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (context) => `${context.dataset.label}: ${context.parsed.y}%`
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: { 
+                                        color: textColor,
+                                        callback: (value) => value + '%'
+                                    },
+                                    grid: { color: gridColor }
+                                },
+                                x: {
+                                    ticks: { color: textColor },
+                                    grid: { color: gridColor }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Gráfico de Velocidad Semanal
+                if (velocityCanvasRef.current) {
+                    if (velocityChartRef.current) velocityChartRef.current.destroy();
+
+                    velocityChartRef.current = new Chart(velocityCanvasRef.current, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Casos por Día',
+                                data: snapshotsList.map(s => s.velocidad),
+                                backgroundColor: snapshotsList.map((s, i) => {
+                                    if (i === 0) return 'rgba(168, 85, 247, 0.8)';
+                                    const prev = snapshotsList[i - 1];
+                                    return s.velocidad >= prev.velocidad ? 
+                                        'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)';
+                                }),
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: textColor, font: { size: 14 } }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (context) => `${context.parsed.y} casos/día`
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { 
+                                        color: textColor,
+                                        callback: (value) => value + ' c/d'
+                                    },
+                                    grid: { color: gridColor }
+                                },
+                                x: {
+                                    ticks: { color: textColor },
+                                    grid: { color: gridColor }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                return () => {
+                    if (trendChartRef.current) trendChartRef.current.destroy();
+                    if (velocityChartRef.current) velocityChartRef.current.destroy();
+                };
+            }, [snapshots, theme]);
+
+            if (!snapshots || !snapshots.snapshots || snapshots.snapshots.length === 0) {
+                return null;
+            }
+
+            const snapshotsList = snapshots.snapshots;
+            const ultimoSnapshot = snapshotsList[snapshotsList.length - 1];
+            const penultimoSnapshot = snapshotsList.length > 1 ? snapshotsList[snapshotsList.length - 2] : null;
+            const primerSnapshot = snapshotsList[0];
+
+            // Calcular deltas
+            const deltaAvance = penultimoSnapshot ? 
+                (ultimoSnapshot.avance_real - penultimoSnapshot.avance_real).toFixed(1) : 0;
+            const deltaCasos = penultimoSnapshot ? 
+                (ultimoSnapshot.casos_ok - penultimoSnapshot.casos_ok) : 0;
+            const deltaVelocidad = penultimoSnapshot ? 
+                (ultimoSnapshot.velocidad - penultimoSnapshot.velocidad).toFixed(1) : 0;
+            const deltaGAP = penultimoSnapshot ? 
+                (ultimoSnapshot.gap_porcentaje - penultimoSnapshot.gap_porcentaje).toFixed(1) : 0;
+
+            // Calcular promedios
+            const velocidadPromedio = (snapshotsList.reduce((sum, s) => sum + s.velocidad, 0) / snapshotsList.length).toFixed(1);
+            const avancePromedio = (snapshotsList.reduce((sum, s) => sum + s.avance_real, 0) / snapshotsList.length).toFixed(1);
+
+            // Evolución total
+            const evolucionTotal = (ultimoSnapshot.avance_real - primerSnapshot.avance_real).toFixed(1);
+            const casosCompletados = ultimoSnapshot.casos_ok - primerSnapshot.casos_ok;
+
+            return (
+                <div style={{ display: 'grid', gap: '2rem' }}>
+                    
+                    {/* Resumen Comparativo */}
+                    <div className="card">
+                        <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            📊 Comparativa Semanal
+                        </h3>
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+                            gap: '1.5rem' 
+                        }}>
+                            <div style={{ 
+                                padding: '1.5rem', 
+                                background: 'var(--bg-tertiary)', 
+                                borderRadius: '12px',
+                                border: `2px solid ${parseFloat(deltaAvance) >= 0 ? '#10b981' : '#ef4444'}`
+                            }}>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    Avance esta Semana
+                                </div>
+                                <div style={{ fontSize: '2rem', fontWeight: '800', color: parseFloat(deltaAvance) >= 0 ? '#10b981' : '#ef4444' }}>
+                                    {deltaAvance >= 0 ? '+' : ''}{deltaAvance}%
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                    Semana {ultimoSnapshot.semana} vs Semana {penultimoSnapshot?.semana || '-'}
+                                </div>
+                            </div>
+
+                            <div style={{ 
+                                padding: '1.5rem', 
+                                background: 'var(--bg-tertiary)', 
+                                borderRadius: '12px',
+                                border: `2px solid ${deltaCasos >= 0 ? '#10b981' : '#ef4444'}`
+                            }}>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    Casos Completados
+                                </div>
+                                <div style={{ fontSize: '2rem', fontWeight: '800', color: '#06b6d4' }}>
+                                    {deltaCasos >= 0 ? '+' : ''}{deltaCasos}
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                    En la última semana
+                                </div>
+                            </div>
+
+                            <div style={{ 
+                                padding: '1.5rem', 
+                                background: 'var(--bg-tertiary)', 
+                                borderRadius: '12px',
+                                border: `2px solid ${parseFloat(deltaVelocidad) >= 0 ? '#10b981' : '#ef4444'}`
+                            }}>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    Cambio de Velocidad
+                                </div>
+                                <div style={{ fontSize: '2rem', fontWeight: '800', color: parseFloat(deltaVelocidad) >= 0 ? '#10b981' : '#ef4444' }}>
+                                    {deltaVelocidad >= 0 ? '+' : ''}{deltaVelocidad}
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                    casos/día
+                                </div>
+                            </div>
+
+                            <div style={{ 
+                                padding: '1.5rem', 
+                                background: 'var(--bg-tertiary)', 
+                                borderRadius: '12px',
+                                border: `2px solid ${parseFloat(deltaGAP) >= 0 ? '#10b981' : '#ef4444'}`
+                            }}>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    Evolución del GAP
+                                </div>
+                                <div style={{ fontSize: '2rem', fontWeight: '800', color: parseFloat(deltaGAP) >= 0 ? '#10b981' : '#ef4444' }}>
+                                    {deltaGAP >= 0 ? '+' : ''}{deltaGAP}%
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                                    {parseFloat(deltaGAP) > 0 ? 'Empeorando' : parseFloat(deltaGAP) < 0 ? 'Mejorando' : 'Estable'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Gráficos de Tendencia */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '2rem' }}>
+                        <div className="glass-card">
+                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem' }}>📈 Tendencia de Avance</h3>
+                            <div style={{ height: '300px' }}>
+                                <canvas ref={trendCanvasRef}></canvas>
+                            </div>
+                        </div>
+
+                        <div className="glass-card">
+                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem' }}>⚡ Velocidad Semanal</h3>
+                            <div style={{ height: '300px' }}>
+                                <canvas ref={velocityCanvasRef}></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Estadísticas Generales */}
+                    <div className="card">
+                        <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem' }}>📊 Estadísticas del Proyecto</h3>
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+                            gap: '2rem' 
+                        }}>
+                            <div>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    📅 Duración Registrada
+                                </div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: '700' }}>
+                                    {snapshotsList.length} semanas
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                                    Semana {primerSnapshot.semana} → Semana {ultimoSnapshot.semana}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    📈 Evolución Total
+                                </div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: parseFloat(evolucionTotal) >= 0 ? '#10b981' : '#ef4444' }}>
+                                    {evolucionTotal >= 0 ? '+' : ''}{evolucionTotal}%
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                                    {primerSnapshot.avance_real}% → {ultimoSnapshot.avance_real}%
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    ✅ Casos Completados
+                                </div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#06b6d4' }}>
+                                    {casosCompletados}
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                                    En {snapshotsList.length} semanas
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                                    ⚡ Velocidad Promedio
+                                </div>
+                                <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#d4a849' }}>
+                                    {velocidadPromedio}
+                                </div>
+                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                                    casos por día
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Tabla de Snapshots */}
+                    <div className="card">
+                        <h3 style={{ fontSize: '1.3rem', marginBottom: '1.5rem' }}>📋 Historial de Snapshots</h3>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '2px solid var(--border-color)' }}>
+                                        <th style={{ padding: '1rem', textAlign: 'left' }}>Semana</th>
+                                        <th style={{ padding: '1rem', textAlign: 'left' }}>Fecha</th>
+                                        <th style={{ padding: '1rem', textAlign: 'right' }}>Avance Real</th>
+                                        <th style={{ padding: '1rem', textAlign: 'right' }}>Planificado</th>
+                                        <th style={{ padding: '1rem', textAlign: 'right' }}>Casos OK</th>
+                                        <th style={{ padding: '1rem', textAlign: 'right' }}>Velocidad</th>
+                                        <th style={{ padding: '1rem', textAlign: 'right' }}>GAP</th>
+                                        <th style={{ padding: '1rem', textAlign: 'center' }}>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {snapshotsList.map((snapshot, index) => (
+                                        <tr key={index} style={{ 
+                                            borderBottom: '1px solid var(--border-color)',
+                                            background: index === snapshotsList.length - 1 ? 
+                                                'var(--bg-glass-hover)' : 'transparent'
+                                        }}>
+                                            <td style={{ padding: '1rem', fontWeight: '600' }}>S{snapshot.semana}</td>
+                                            <td style={{ padding: '1rem', color: 'var(--text-secondary)' }}>
+                                                {new Date(snapshot.fecha).toLocaleDateString('es-ES', { 
+                                                    day: '2-digit', month: 'short' 
+                                                })}
+                                            </td>
+                                            <td style={{ padding: '1rem', textAlign: 'right', fontWeight: '600', color: '#06b6d4' }}>
+                                                {snapshot.avance_real}%
+                                            </td>
+                                            <td style={{ padding: '1rem', textAlign: 'right', color: '#d4a849' }}>
+                                                {snapshot.planificado}%
+                                            </td>
+                                            <td style={{ padding: '1rem', textAlign: 'right' }}>
+                                                {snapshot.casos_ok}
+                                            </td>
+                                            <td style={{ padding: '1rem', textAlign: 'right' }}>
+                                                {snapshot.velocidad}
+                                            </td>
+                                            <td style={{ 
+                                                padding: '1rem', 
+                                                textAlign: 'right', 
+                                                fontWeight: '600',
+                                                color: snapshot.gap_porcentaje < -15 ? '#ef4444' : 
+                                                       snapshot.gap_porcentaje < -5 ? '#f59e0b' : '#10b981'
+                                            }}>
+                                                {snapshot.gap_porcentaje}%
+                                            </td>
+                                            <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                                <span style={{
+                                                    padding: '0.3rem 0.8rem',
+                                                    borderRadius: '12px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: '600',
+                                                    background: snapshot.status === 'DELAYED' ? 'rgba(239, 68, 68, 0.2)' :
+                                                               snapshot.status === 'AT RISK' ? 'rgba(251, 191, 36, 0.2)' :
+                                                               'rgba(16, 185, 129, 0.2)',
+                                                    color: snapshot.status === 'DELAYED' ? '#ef4444' :
+                                                          snapshot.status === 'AT RISK' ? '#fbbf24' :
+                                                          '#10b981'
+                                                }}>
+                                                    {snapshot.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
