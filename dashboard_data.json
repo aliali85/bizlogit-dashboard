@@ -1,17 +1,22 @@
 {
-  "fecha": "12-feb",
-  "fecha_formato": "12-Feb",
+  "fecha": "13-feb",
+  "fecha_formato": "13-Feb",
+  "logos": {
+    "principal": "https://i.ibb.co/Gv8jRZq0/logo-biz-v1.png",
+    "cliente_1": "https://i.ibb.co/tPPfK25F/trf-logo-v1.png",
+    "cliente_2": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Adidas_Logo.svg/200px-Adidas_Logo.svg.png"
+  },
   "kpis": {
-    "avance_real": 70.5,
-    "planificado": 89.3,
-    "casos_ok": 630,
-    "casos_wip": 126,
-    "casos_pendientes": 249,
-    "issues_activos": 2,
-    "total_casos": 1005,
-    "total_ponderado": 708.2,
-    "gap": -188.8,
-    "gap_porcentaje": -18.8,
+    "avance_real": 74.5,
+    "planificado": 94.7,
+    "casos_ok": 654,
+    "casos_wip": 128,
+    "casos_pendientes": 207,
+    "issues_activos": 13,
+    "total_casos": 989,
+    "total_ponderado": 736.4,
+    "gap": -200.6,
+    "gap_porcentaje": -20.3,
     "status": "DELAYED"
   },
   "modulos": {
@@ -26,15 +31,15 @@
       "ok": 1,
       "wip": 27,
       "ponderado": 18.3,
-      "total": 127,
-      "porcentaje": 14.4
+      "total": 121,
+      "porcentaje": 15.1
     },
     "outbound": {
-      "ok": 592,
-      "wip": 99,
-      "ponderado": 652.9,
-      "total": 841,
-      "porcentaje": 77.6
+      "ok": 616,
+      "wip": 101,
+      "ponderado": 681.1,
+      "total": 831,
+      "porcentaje": 82.0
     }
   },
   "issues": {
@@ -56,21 +61,120 @@
         "responsable": "BIZLOGIT",
         "estado": "EN ANALISIS",
         "sistema": "WMS / BIZION"
+      },
+      {
+        "id": "ISS - 006",
+        "severidad": "MEDIUM",
+        "severidad_key": "medium",
+        "descripcion": "Se están imprimiendo las etiquetas de expedición en pedidos ECOM.",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION"
+      },
+      {
+        "id": "ISS - 007",
+        "severidad": "HIGH",
+        "severidad_key": "high",
+        "descripcion": "Se genera un error de procesamiento al recibir las novedades de empaquetado de pedidos vía API desde INFOR",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION"
+      },
+      {
+        "id": "ISS - 008",
+        "severidad": "LOW",
+        "severidad_key": "low",
+        "descripcion": "Reimprimir etiquetas BIZION salen con tipo de pedido 100 en lugar del código de tipo de pedido",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION"
+      },
+      {
+        "id": "ISS - 010",
+        "severidad": "MEDIUM",
+        "severidad_key": "medium",
+        "descripcion": "Etiquetas de cubeta de pedidos ECP se generan como EPB\nTCO-730\nTCO-735\nTCO-737",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "N/A"
+      },
+      {
+        "id": "ISS - 011",
+        "severidad": "MEDIUM",
+        "severidad_key": "medium",
+        "descripcion": "Etiqueta de MELI sale doble (Tipo de pedido EPB), si se lo imprime mediante \"Imprimir pendiente\"",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "N/A"
+      },
+      {
+        "id": "ISS - 012",
+        "severidad": "LOW",
+        "severidad_key": "low",
+        "descripcion": "Pedidos que tienen en la linea caja completa pasan a Pack completo automáticamente luego de la preparación",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "N/A"
+      },
+      {
+        "id": "ISS - 014",
+        "severidad": "LOW",
+        "severidad_key": "low",
+        "descripcion": "Se genero un pedido de repo con el atributo 09 vacío\nRPAA260206095820IND cuando tendría que haber sido - atributo09 = LOCSTC",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION  "
+      },
+      {
+        "id": "ISS - 015",
+        "severidad": "LOW",
+        "severidad_key": "low",
+        "descripcion": "Planificador: Sería deseable que cuando se hace click en pedido a Enviar no se visualicen más en la pantalla, una vez realizado el envío al WMS.",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION  "
+      },
+      {
+        "id": "ISS - 016",
+        "severidad": "LOW",
+        "severidad_key": "low",
+        "descripcion": "Planificador: Sería deseable que cuando se hace click en pedido a Enviar , PERMITA ENVIAR TODOS LOS PEDIDOS INVOLUCRADOS EN LA PLANIFICACIÓN Y NO SOLO 10",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION  "
+      },
+      {
+        "id": "ISS - 017",
+        "severidad": "HIGH",
+        "severidad_key": "high",
+        "descripcion": "Para pedidos No Ecom estamos observando que se imprime una etiqueta menos de los que indica el pedido en WMS",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION  "
+      },
+      {
+        "id": "ISS - 019",
+        "severidad": "MEDIUM",
+        "severidad_key": "medium",
+        "descripcion": "Los pedidos crossdock no vienen diferenciados con un tipo y no se puede configurar correctamente en WMS para evitar el envío de integraciones a MAGIS.",
+        "responsable": "BIZLOGIT",
+        "estado": "EN ANALISIS",
+        "sistema": "BIZION / WMS"
       }
     ],
     "estadisticas": {
       "critical": 0,
-      "high": 2,
-      "medium": 0,
-      "low": 0
+      "high": 4,
+      "medium": 4,
+      "low": 5
     },
-    "total": 2
+    "total": 13
   },
   "issues_severidad": {
     "critical": 0,
-    "high": 2,
-    "medium": 0,
-    "low": 0
+    "high": 4,
+    "medium": 4,
+    "low": 5
   },
   "procesos": {
     "MAESTROS": {
@@ -88,7 +192,7 @@
       "porcentaje": 65.3
     },
     "DEVOLUCIONES": {
-      "total": 99,
+      "total": 93,
       "ok": 0,
       "wip": 0,
       "ponderado": 0.0,
@@ -102,46 +206,46 @@
       "porcentaje": 100.0
     },
     "PREPARACION": {
-      "total": 525,
-      "ok": 339,
-      "wip": 39,
-      "ponderado": 353.812271062271,
-      "porcentaje": 67.4
+      "total": 444,
+      "ok": 356,
+      "wip": 11,
+      "ponderado": 361.70512820512823,
+      "porcentaje": 81.5
     },
     "TECNIFICACION": {
-      "total": 258,
-      "ok": 159,
-      "wip": 8,
-      "ponderado": 164.01190476190476,
-      "porcentaje": 63.6
+      "total": 195,
+      "ok": 164,
+      "wip": 4,
+      "ponderado": 166.88369963369965,
+      "porcentaje": 85.6
     },
     "PLANIFICACION": {
-      "total": 85,
-      "ok": 62,
-      "wip": 15,
-      "ponderado": 69.34265734265733,
-      "porcentaje": 81.6
+      "total": 87,
+      "ok": 64,
+      "wip": 20,
+      "ponderado": 75.27272727272725,
+      "porcentaje": 86.5
     },
-    "EMPAQUETADO": {
-      "total": 2,
-      "ok": 0,
-      "wip": 2,
-      "ponderado": 1.6932773109243697,
-      "porcentaje": 84.7
+    "DISTRIBUCION": {
+      "total": 35,
+      "ok": 6,
+      "wip": 29,
+      "ponderado": 27.75,
+      "porcentaje": 79.3
     },
     "CANALIZADO": {
-      "total": 29,
+      "total": 34,
       "ok": 9,
-      "wip": 19,
-      "ponderado": 25.2989010989011,
-      "porcentaje": 87.2
+      "wip": 21,
+      "ponderado": 26.98571428571429,
+      "porcentaje": 79.4
     },
     "PACK & HOLD": {
       "total": 1,
       "ok": 0,
       "wip": 1,
-      "ponderado": 0.8666666666666667,
-      "porcentaje": 86.7
+      "ponderado": 0.8333333333333334,
+      "porcentaje": 83.3
     },
     "INVENTARIO": {
       "total": 8,
@@ -154,32 +258,28 @@
       "total": 9,
       "ok": 0,
       "wip": 6,
-      "ponderado": 4.564705882352941,
-      "porcentaje": 50.7
-    },
-    "DISTRIBUCION": {
-      "total": 6,
-      "ok": 6,
-      "wip": 0,
-      "ponderado": 6.0,
-      "porcentaje": 100.0
+      "ponderado": 4.4068627450980395,
+      "porcentaje": 49.0
     },
     "CARGA DE CAMION": {
       "total": 9,
       "ok": 0,
       "wip": 9,
-      "ponderado": 6.316176470588236,
-      "porcentaje": 70.2
+      "ponderado": 5.96078431372549,
+      "porcentaje": 66.2
     }
   },
   "velocidad": {
-    "actual": 38.7,
-    "requerida": 24.7,
-    "dias_transcurridos": 16,
+    "actual": 37.8,
+    "requerida": 23.0,
+    "dias_transcurridos": 17,
     "proyeccion_finalizacion": "19-Feb"
   },
   "issues_por_sistema": {
-    "WMS  /  BIZION": 2
+    "WMS  /  BIZION": 2,
+    "BIZION": 7,
+    "OTRO": 3,
+    "BIZION  /  WMS": 1
   },
   "segmentos": {},
   "equipos": {
