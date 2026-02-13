@@ -20,7 +20,7 @@
     "alcance_total": { 
         "dataset": 37, 
         "inbound": 127, 
-        "outbound": 841 
+        "outbound": 941 
     },
    "planificacion_diaria": {
     "16-dic": 24, "17-dic": 48, "18-dic": 71, "19-dic": 87, "20-dic": 87, "21-dic": 87, "22-dic": 98,
@@ -35,4 +35,5 @@
     "17-feb": 954, "18-feb": 978, "19-feb": 1002, "20-feb": 1026, "21-feb": 1026, "22-feb": 1026, "23-feb": 1051,
     "24-feb": 1077
 }
+
 }
