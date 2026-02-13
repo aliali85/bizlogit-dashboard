@@ -2,7 +2,7 @@
   "metadata": {
     "proyecto": "ADIDAS - SEGMENTO III - F2 y F3",
     "creado": "2026-01-20",
-    "ultima_actualizacion": "2026-02-12"
+    "ultima_actualizacion": "2026-02-13"
   },
   "snapshots": [
     {
@@ -51,19 +51,19 @@
       "total_ponderado": 576.0
     },
     {
-      "fecha": "2026-02-12",
+      "fecha": "2026-02-13",
       "semana": 7,
       "semana_inicio": "2026-02-09",
-      "avance_real": 70.5,
-      "planificado": 89.3,
-      "casos_ok": 630,
-      "total_casos": 1005,
-      "velocidad": 21.0,
-      "issues_activos": 2,
-      "gap": -188.8,
-      "gap_porcentaje": -18.8,
+      "avance_real": 74.5,
+      "planificado": 94.7,
+      "casos_ok": 654,
+      "total_casos": 989,
+      "velocidad": 21.8,
+      "issues_activos": 13,
+      "gap": -200.6,
+      "gap_porcentaje": -20.3,
       "status": "DELAYED",
-      "total_ponderado": 708.2
+      "total_ponderado": 736.4
     }
   ]
 }
